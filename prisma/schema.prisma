@@ -12,29 +12,63 @@ enum Role {
   ADMIN
 }
 
+enum VoteUserRelation {
+  OWNER
+  VOTER
+}
+
+enum VoteField {
+  UPVOTE
+  DOWNVOTE
+  NEUTRAL
+}
+
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  name  String?
-  votes Vote[]
-  role  String  @default("USER")
+  id        String         @id @unique @default(cuid())
+  email     String         @unique
+  name      String?
+  role      Role           @default(USER)
+  votes     VoteUser[]
+  voteItems UserVoteItem[]
+}
+
+model VoteUser {
+  id       String           @id @unique @default(cuid())
+  userId   String
+  voteId   String
+  relation VoteUserRelation @default(VOTER)
+  user     User             @relation(fields: [userId], references: [id])
 }
 
 model Vote {
-  id               String     @id @default(cuid())
-  user             User       @relation(fields: [userId], references: [id])
-  userId           String
+  id               String         @id @unique @default(cuid())
   title            String
+  description      String?
+  usersCanAddItems Boolean        @default(false)
   items            VoteItem[]
-  usersCanAddItems Boolean    @default(false)
+  userVotes        UserVoteItem[]
+  isClosed         Boolean        @default(false)
+  endDate          DateTime?
+  createdAt        DateTime       @default(now())
 }
 
 model VoteItem {
-  id          String @id @default(cuid())
-  vote        Vote   @relation(fields: [voteId], references: [id])
-  voteId      String
+  id          String         @id @unique @default(cuid())
   title       String
-  description String
-  count       Int    @default(0)
-  gmaps       String
+  description String?
+  gmaps       String?
+  vote        Vote           @relation(fields: [voteId], references: [id])
+  voteId      String
+  userVotes   UserVoteItem[]
+}
+
+model UserVoteItem {
+  id         String    @id @unique @default(cuid())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String
+  voteItem   VoteItem  @relation(fields: [voteItemId], references: [id])
+  voteItemId String
+  vote       Vote      @relation(fields: [voteId], references: [id])
+  voteId     String
+  voteType   VoteField @default(NEUTRAL)
 }
