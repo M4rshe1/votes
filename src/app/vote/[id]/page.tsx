@@ -7,7 +7,7 @@ import VoteItems from "@/components/voteItems";
 import {revalidatePath} from "next/cache";
 import {VoteField} from "@prisma/client";
 import CopyLink from "@/components/copyLink";
-import VoteStats, {MiniVoteStat, VoteStat} from "@/components/voteStats";
+import VoteStats, {MiniVoteStat} from "@/components/voteStats";
 import CloseOrReopenVotingButton from "@/components/closeOrReopenVotingButton";
 
 const Page = async ({params}: { params: { id: string } }) => {
@@ -215,7 +215,8 @@ const Page = async ({params}: { params: { id: string } }) => {
             </p>
             <div className={"w-full flex items-center justify-around mt-4"}>
                 <MiniVoteStat title={"Creator"} value={vote.voteOwner[0].user.name as string}/>
-                <MiniVoteStat title={"Votes per user"} value={vote.votesAllowed > 0 ? vote.votesAllowed.toString() : "Unlimited"}/>
+                <MiniVoteStat title={"Votes per user"}
+                              value={vote.votesAllowed > 0 ? vote.votesAllowed.toString() : "Unlimited"}/>
                 <MiniVoteStat title={"Positive only"} value={vote.upVotesOnly ? "Yes" : "No"}/>
                 {
                     (hasVotingEnded || vote.isClosed) ? (
