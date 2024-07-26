@@ -12,11 +12,6 @@ enum Role {
   ADMIN
 }
 
-enum VoteUserRelation {
-  OWNER
-  VOTER
-}
-
 enum VoteField {
   UPVOTE
   DOWNVOTE
@@ -24,51 +19,55 @@ enum VoteField {
 }
 
 model User {
-  id        String         @id @unique @default(cuid())
-  email     String         @unique
-  name      String?
-  role      Role           @default(USER)
-  votes     VoteUser[]
-  voteItems UserVoteItem[]
+  id            String         @id @unique @default(cuid())
+  email         String         @unique
+  name          String?
+  role          Role           @default(USER)
+  ownedVotes    VoteOwner[]
+  userVoteItems UserVoteItem[]
 }
 
-model VoteUser {
-  id       String           @id @unique @default(cuid())
-  userId   String
-  voteId   String
-  relation VoteUserRelation @default(VOTER)
-  user     User             @relation(fields: [userId], references: [id])
+model VoteOwner {
+  id     String @id @unique @default(cuid())
+  userId String
+  voteId String
+  vote   Vote   @relation(fields: [voteId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Vote {
   id               String         @id @unique @default(cuid())
+  code             String         @unique
   title            String
   description      String?
   usersCanAddItems Boolean        @default(false)
-  items            VoteItem[]
-  userVotes        UserVoteItem[]
+  votesAllowed     Int            @default(0)
+  voteItems        VoteItem[]
+  userVoteItems    UserVoteItem[]
   isClosed         Boolean        @default(false)
   endDate          DateTime?
   createdAt        DateTime       @default(now())
+  voteOwner        VoteOwner[]
+  upVotesOnly      Boolean        @default(false)
 }
 
 model VoteItem {
-  id          String         @id @unique @default(cuid())
-  title       String
-  description String?
-  gmaps       String?
-  vote        Vote           @relation(fields: [voteId], references: [id])
-  voteId      String
-  userVotes   UserVoteItem[]
+  id            String         @id @unique @default(cuid())
+  title         String
+  description   String?
+  gmaps         String?
+  vote          Vote           @relation(fields: [voteId], references: [id], onDelete: Cascade)
+  voteId        String
+  userVoteItems UserVoteItem[]
 }
 
 model UserVoteItem {
   id         String    @id @unique @default(cuid())
-  user       User      @relation(fields: [userId], references: [id])
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
-  voteItem   VoteItem  @relation(fields: [voteItemId], references: [id])
+  voteItem   VoteItem  @relation(fields: [voteItemId], references: [id], onDelete: Cascade)
   voteItemId String
-  vote       Vote      @relation(fields: [voteId], references: [id])
+  vote       Vote      @relation(fields: [voteId], references: [id], onDelete: Cascade)
   voteId     String
   voteType   VoteField @default(NEUTRAL)
 }

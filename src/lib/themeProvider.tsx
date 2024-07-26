@@ -7,7 +7,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const savedTheme = typeof window !== 'undefined'
-            ? localStorage.getItem("votes_theme")
+            ? localStorage.getItem("novotes_theme")
             : "dark"
         if (savedTheme) {
             setTheme(savedTheme);
