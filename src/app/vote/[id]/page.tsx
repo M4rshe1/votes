@@ -201,17 +201,7 @@ const Page = async ({params}: { params: { id: string } }) => {
             <div
                 className={"mt-5"}
             >
-                {
-                    (hasVotingEnded || vote.isClosed) ? (
-                        <h2
-                            className={"text-2xl font-bold text-accent"}
-                        >Voting has ended</h2>
-                    ) : vote.endDate ? (
-                        <h2
-                            className={"text-2xl font-bold text-accent"}
-                        >Voting ends on {new Date(vote.endDate).toLocaleString()}</h2>
-                    ) : null
-                }
+
             </div>
             <h1
                 className={"text-3xl font-bold mt-4 text-primary relative"}
@@ -226,7 +216,16 @@ const Page = async ({params}: { params: { id: string } }) => {
             <div className={"w-full flex items-center justify-around mt-4"}>
                 <MiniVoteStat title={"Creator"} value={vote.voteOwner[0].user.name as string}/>
                 <MiniVoteStat title={"Votes per user"} value={vote.votesAllowed > 0 ? vote.votesAllowed.toString() : "Unlimited"}/>
-                <MiniVoteStat title={"Positive only"} value={vote.positiveOnly ? "Yes" : "No"}/>
+                <MiniVoteStat title={"Positive only"} value={vote.upVotesOnly ? "Yes" : "No"}/>
+                {
+                    (hasVotingEnded || vote.isClosed) ? (
+                        <MiniVoteStat title={"Status"} value={hasVotingEnded ? "Ended" : "Closed"}/>
+                    ) : vote.endDate ? (
+                        <MiniVoteStat title={"End date"} value={new Date(vote.endDate).toLocaleString()}/>
+                    ) : (
+                        <MiniVoteStat title={"Status"} value={"Open"}/>
+                    )
+                }
             </div>
 
             {
