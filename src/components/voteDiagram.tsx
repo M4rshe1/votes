@@ -23,7 +23,7 @@ const VoteDiagram = async ({vote}: { vote: any }) => {
 
     const negativeMax = Math.max(...negativeVoteItems.map((item: any) => item.userVoteItems.filter((vote: any) => vote.voteType === "DOWNVOTE").length))
     return (
-        <div className="w-full flex flex-col items-center justify-center border-neutral rounded-lg border-2 mt-8">
+        <div className="w-full flex flex-col items-center justify-center border-neutral rounded-lg border-2 mt-4">
             {
                 positiveVoteItems.length !== 0 &&
                 <div
