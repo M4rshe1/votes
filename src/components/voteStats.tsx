@@ -51,11 +51,11 @@ export const VoteStat = ({title, value}: { title: string, value: string }) => {
     )
 }
 
-export const MiniVoteStat = ({title, value}: { title: string, value: string }) => {
+export const MiniVoteStat = ({title, value}: { title: string, value: string | Element }) => {
     return (
-        <div className="flex flex-col items-center justify-center">
-            <h1 className="text-xl font-bold text-accent">{value}</h1>
-            <p className="text-sm font-semibold text-center">{title}</p>
+        <div className="flex flex-col items-center justify-center grow">
+            <h1 className="text-lg font-bold text-accent">{value as string}</h1>
+            <p className="text-xs font-semibold text-center">{title}</p>
         </div>
     )
 }

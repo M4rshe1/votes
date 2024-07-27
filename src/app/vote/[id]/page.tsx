@@ -8,7 +8,7 @@ import {revalidatePath} from "next/cache";
 import {VoteField} from "@prisma/client";
 import CopyLink from "@/components/copyLink";
 import VoteStats, {MiniVoteStat} from "@/components/voteStats";
-import CloseOrReopenVotingButton from "@/components/closeOrReopenVotingButton";
+import SettingsMenu from "@/components/settingsMenu";
 
 const Page = async ({params}: { params: { id: string } }) => {
     const session = await getServerSession(authOptions)
@@ -185,19 +185,133 @@ const Page = async ({params}: { params: { id: string } }) => {
         return revalidatePath("/vote/" + params.id)
     }
 
+    async function anonymizeVote(keep: string) {
+        "use server"
+        await db.vote.update({
+            where: {
+                code: params.id
+            },
+            data: {
+                anonymous: !vote?.anonymous || true
+            }
+        })
+        return revalidatePath("/vote/" + params.id)
+    }
+
+    async function allowOnlyPositiveVotes(keep: string) {
+        "use server"
+        await db.vote.update({
+            where: {
+                code: params.id
+            },
+            data: {
+                upVotesOnly: !vote?.upVotesOnly || false
+            }
+        })
+        return revalidatePath("/vote/" + params.id)
+    }
+
+    async function allowVotes(votes: string) {
+        "use server"
+        await db.vote.update({
+            where: {
+                code: params.id
+            },
+            data: {
+                votesAllowed: parseInt(votes)
+            }
+        })
+        return revalidatePath("/vote/" + params.id)
+    }
+
+    async function setEndDate(date: string) {
+        "use server"
+        await db.vote.update({
+            where: {
+                code: params.id
+            },
+            data: {
+                endDate: date
+            }
+        })
+        return revalidatePath("/vote/" + params.id)
+    }
+
+    async function setUserCanAddItems(canAddItems: boolean) {
+        "use server"
+        await db.vote.update({
+            where: {
+                code: params.id
+            },
+            data: {
+                usersCanAddItems: canAddItems
+            }
+        })
+        return revalidatePath("/vote/" + params.id)
+    }
+
+    async function deleteVote() {
+        "use server"
+        await db.vote.delete({
+            where: {
+                code: params.id
+            }
+        })
+        return revalidatePath("/")
+    }
+
+    async function setTitle(title: string) {
+        "use server"
+        await db.vote.update({
+            where: {
+                code: params.id
+            },
+            data: {
+                title: title
+            }
+        })
+        return revalidatePath("/vote/" + params.id)
+    }
+
+    async function setDescription(description: string) {
+        "use server"
+        await db.vote.update({
+            where: {
+                code: params.id
+            },
+            data: {
+                description: description
+            }
+        })
+        return revalidatePath("/vote/" + params.id)
+    }
+
     // @ts-ignore
     const isOwner = vote.voteOwner[0].user.email === session?.user.email;
-    const hasVotingEnded = vote.endDate && new Date(vote.endDate) < new Date();
+    const currentDate = new Date()
+    currentDate.setHours(0, 0, 0, 0)
+    let hasVotingEnded = false;
+    if (vote.endDate) {
+        const endDate = new Date(vote.endDate)
+        endDate.setHours(0, 0, 0, 0)
+        hasVotingEnded = endDate < currentDate
+    }
+    const uniqueVoters: { name: string, email: string, votes: any[] }[] = [];
+    vote.voteItems.forEach((voteItem) => {
+        voteItem.userVoteItems.forEach((userVoteItem) => {
+            if (!uniqueVoters.some((voter) => voter.email === userVoteItem.user.email)) {
+                uniqueVoters.push({
+                    name: userVoteItem.user.name as string,
+                    email: userVoteItem.user.email,
+                    votes: vote.voteItems.flat().filter((item) => item.userVoteItems.some((vote) => vote.user.email === userVoteItem.user.email))
+                });
+            }
+        });
+    })
 
     return (
         <div className="h-full w-full lg:max-w-4xl md:max-w-3xl flex flex-col items-center px-4 mb-8 relative">
-            {(isOwner && !hasVotingEnded) &&
-                <div
-                    className={"absolute right-4 top-4"}
-                >
-                    <CloseOrReopenVotingButton closeOrReopenVoting={closeOrReopenVote} isOpen={!vote.isClosed}/>
-                </div>
-            }
+
             <div
                 className={"mt-5"}
             >
@@ -213,18 +327,27 @@ const Page = async ({params}: { params: { id: string } }) => {
             <p>
                 {vote.description}
             </p>
-            <div className={"w-full flex items-center justify-around mt-4"}>
+            <div className={"w-full flex items-start justify-around mt-4 flex-wrap"}>
                 <MiniVoteStat title={"Creator"} value={vote.voteOwner[0].user.name as string}/>
-                <MiniVoteStat title={"Votes per user"}
-                              value={vote.votesAllowed > 0 ? vote.votesAllowed.toString() : "Unlimited"}/>
+                <MiniVoteStat title={"Votes"}
+                              value={vote.votesAllowed > 0 ? vote.votesAllowed.toString() : 'INF'}/>
                 <MiniVoteStat title={"Positive only"} value={vote.upVotesOnly ? "Yes" : "No"}/>
                 {
                     (hasVotingEnded || vote.isClosed) ? (
                         <MiniVoteStat title={"Status"} value={hasVotingEnded ? "Ended" : "Closed"}/>
                     ) : vote.endDate ? (
-                        <MiniVoteStat title={"End date"} value={new Date(vote.endDate).toLocaleString()}/>
+                        <MiniVoteStat title={"Ending"} value={new Date(vote.endDate).toLocaleString("de-CH", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric"
+                        })}/>
                     ) : (
                         <MiniVoteStat title={"Status"} value={"Open"}/>
+                    )
+                }
+                {
+                    vote.anonymous && (
+                        <MiniVoteStat title={"Anonymous"} value={"Yes"}/>
                     )
                 }
             </div>
@@ -234,9 +357,37 @@ const Page = async ({params}: { params: { id: string } }) => {
                 <VoteDiagram vote={vote}/>
             }
             <VoteStats vote={vote}/>
-            <VoteItems vote={vote} onVote={onVote} addVote={addVote} deleteVoteItem={deleteVoteItem} isOwner={isOwner}
+            <VoteItems vote={vote}
+                       onVote={onVote}
+                       addVote={addVote}
+                       deleteVoteItem={deleteVoteItem}
+                       isOwner={isOwner}
                 // @ts-ignore
-                       userEmail={session.user.email}/>
+                       userEmail={session.user.email}
+                       positiveOnly={vote.upVotesOnly}
+                       anonymousVoting={vote.anonymous}
+            />
+            {
+                isOwner &&
+                <SettingsMenu closeOrReopenVoting={closeOrReopenVote}
+                              votingIsOpen={!vote.isClosed}
+                              anonymousVoting={vote.anonymous}
+                              anonymousVote={anonymizeVote}
+                              positiveOnly={vote.upVotesOnly}
+                              setPositiveOnly={allowOnlyPositiveVotes}
+                              allowedVotes={vote.votesAllowed}
+                              setAllowedVotes={allowVotes}
+                              endDate={vote.endDate}
+                              setEndDate={setEndDate}
+                              setUserCanAddItems={setUserCanAddItems}
+                              userCanAddItems={vote.usersCanAddItems}
+                              deleteVoting={deleteVote}
+                              setTitle={setTitle}
+                              setDesc={setDescription}
+                              title={vote.title}
+                              desc={vote.description as string}
+                />
+            }
         </div>
     )
 }

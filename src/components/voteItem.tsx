@@ -1,11 +1,12 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {VoteField} from "@prisma/client";
+import Image from "next/image";
 
 
 const VoteItem = (
     {
-        item, onVote, index, deleteItem, isOwner, isClosed, userEmail, positiveOnly
+        item, onVote, index, deleteItem, isOwner, isClosed, userEmail, positiveOnly, anonymousVoting
     }: {
         item: any,
         onVote: any,
@@ -14,7 +15,8 @@ const VoteItem = (
         isOwner: boolean,
         isClosed: boolean,
         userEmail: string,
-        positiveOnly: boolean
+        positiveOnly: boolean,
+        anonymousVoting: boolean
     }
 ) => {
 
@@ -81,6 +83,38 @@ const VoteItem = (
                             </div>
                         }
                     </div>
+                    {!anonymousVoting &&
+                        <div className="avatar-group -space-x-6 rtl:space-x-reverse">
+                            {
+                                item.userVoteItems.slice(0, 3).map((vote: any, index: number) => (
+                                    vote.user.image ?
+                                        <div
+                                            data-tip={vote.user.name + " - " + vote.voteType}
+                                            key={index} className="avatar tooltip">
+                                            <div className="w-12">
+                                                <Image src={vote.user.image} alt={vote.user.name} width={32} height={32}
+                                                       className="rounded-full"/>
+                                            </div>
+                                        </div> :
+                                        < div
+                                            data-tip={vote.user.name + " - " + vote.voteType}
+                                            className="avatar placeholder tooltip">
+                                            <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                                                <span>{vote.user.name.charAt(0)}</span>
+                                            </div>
+                                        </div>
+                                ))
+                            }
+                            {
+                                item.userVoteItems.length > 3 &&
+                                <div className="avatar placeholder">
+                                    <div className="bg-neutral text-neutral-content w-8">
+                                        <span>+{item.userVoteItems.length - 3}</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
                     <div
                         className={"flex items-center gap-2"}
                     >

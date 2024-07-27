@@ -5,8 +5,19 @@ import {useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 
-const VoteItems = ({vote, onVote, addVote, deleteVoteItem, isOwner, userEmail, positiveOnly}
-                       : { vote: any, onVote: any, addVote: any, deleteVoteItem: any, isOwner: boolean , userEmail: string, positiveOnly: boolean }
+const VoteItems = ({
+                       vote, onVote, addVote, deleteVoteItem, isOwner, userEmail, positiveOnly, anonymousVoting
+                   }
+                       : {
+                       vote: any,
+                       onVote: any,
+                       addVote: any,
+                       deleteVoteItem: any,
+                       isOwner: boolean,
+                       userEmail: string,
+                       positiveOnly: boolean,
+                       anonymousVoting: boolean,
+                   }
 ) => {
     const [isAddingVote, setIsAddingVote] = useState(false);
 
@@ -17,7 +28,6 @@ const VoteItems = ({vote, onVote, addVote, deleteVoteItem, isOwner, userEmail, p
     }).reduce((acc: any, item: any) => {
         return {...acc, ...item}
     })
-    console.log(voteItemScores)
 
     const sortedVoteItems = vote.voteItems.sort((a: any, b: any) => {
         return voteItemScores[b.id] - voteItemScores[a.id]
@@ -45,6 +55,7 @@ const VoteItems = ({vote, onVote, addVote, deleteVoteItem, isOwner, userEmail, p
                     isClosed={isClosed}
                     userEmail={userEmail}
                     positiveOnly={positiveOnly}
+                    anonymousVoting={anonymousVoting}
                 />
             ))}
             {

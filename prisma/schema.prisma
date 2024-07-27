@@ -25,6 +25,8 @@ model User {
   role          Role           @default(USER)
   ownedVotes    VoteOwner[]
   userVoteItems UserVoteItem[]
+  image         String?
+  createdAt     DateTime       @default(now())
 }
 
 model VoteOwner {
@@ -49,6 +51,7 @@ model Vote {
   createdAt        DateTime       @default(now())
   voteOwner        VoteOwner[]
   upVotesOnly      Boolean        @default(false)
+  anonymous        Boolean        @default(true)
 }
 
 model VoteItem {

@@ -18,6 +18,12 @@ const Footer = () => {
                 >
                     <FontAwesomeIcon icon={fab.faGithub} className={"w-8 aspect-square text-5xl"}/>
                 </Link>
+                <Link
+                    href={"https://colin.heggli.dev"}
+                    target={"_blank"}
+                >
+                    <FontAwesomeIcon icon={fas.faHashtag} className={"w-8 aspect-square text-5xl"}/>
+                </Link>
             </nav>
         </footer>
     )
