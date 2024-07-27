@@ -160,7 +160,7 @@ const settingsMenu = ({
                                     <FontAwesomeIcon icon={fas.faPlus}/>
                                 </button>
                                 <button
-                                    onClick={() => setAllowedVotes(Math.abs(allowedVotes - 1))}
+                                    onClick={() => setAllowedVotes(Math.max(allowedVotes - 1, 0))}
                                     data-tip={"Remove vote"}
                                     className={"btn btn-secondary btn-sm text-white p-2 rounded tooltip tooltip-left aspect-square"}
                                 >
@@ -206,7 +206,7 @@ const settingsMenu = ({
                             className={"flex items-center gap-2 justify-between"}
                         >
                             <span>
-                                Users can add items
+                                Users can {!userCanAddItems && "not"} add items
                             </span>
                             <button
                                 onClick={() => setUserCanAddItems(!userCanAddItems)}
@@ -223,7 +223,7 @@ const settingsMenu = ({
                             className={"flex items-center gap-2 justify-between"}
                         >
                             <span>
-                                Set a title
+                                Edit title
                             </span>
                             <button
                                 onClick={() => {
@@ -241,7 +241,7 @@ const settingsMenu = ({
                             className={"flex items-center gap-2 justify-between"}
                         >
                             <span>
-                                Set a description
+                                Edit description
                             </span>
                             <button
                                 onClick={() => {

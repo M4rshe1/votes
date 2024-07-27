@@ -78,7 +78,7 @@ const VoteItems = ({
                 )
             }
             {
-                ((vote.usersCanAddItems || isOwner) && !isClosed) && (
+                ((vote.usersCanAddItems && !isClosed) || isOwner) && (
                     <div
                         className="flex flex-col gap-2 justify-between p-4 border rounded border-neutral relative w-full h-full">
 

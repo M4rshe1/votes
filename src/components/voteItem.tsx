@@ -1,7 +1,10 @@
+"use client";
+
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {VoteField} from "@prisma/client";
 import Image from "next/image";
+import {useState} from "react";
 
 
 const VoteItem = (
@@ -19,7 +22,6 @@ const VoteItem = (
         anonymousVoting: boolean
     }
 ) => {
-
     const userVote = item.userVoteItems.find((vote: any) => vote.user.email === userEmail)?.voteType;
 
     return (
@@ -54,86 +56,109 @@ const VoteItem = (
                     {item.description || "No description"}
                 </p>
             </div>
-            {!isClosed &&
+
+            <div
+                className={"flex items-center justify-between"}
+            >
                 <div
-                    className={"flex items-center justify-between"}
+                    className={"join join-horizontal"}
                 >
-                    <div
-                        className={"join join-horizontal"}
-                    >
-                        <div
-                            onClick={() => onVote(item.id, VoteField.UPVOTE)}
-                            className={"join-item text-neutral-content flex cursor-pointer items-center justify-center bg-neutral hover:bg-success hover:text-white p-1 transition-all ease-in-out duration-300 px-2 py-1"}
-                        >
-                            <FontAwesomeIcon icon={fas.faUpLong}/>
-                            <span className={"font-bold ml-2"}>
+                    {!isClosed ?
+                        <>
+                            <div
+                                onClick={() => onVote(item.id, VoteField.UPVOTE)}
+                                className={"join-item text-neutral-content flex cursor-pointer items-center justify-center bg-neutral hover:bg-success hover:text-white p-1 transition-all ease-in-out duration-300 px-2 py-1"}
+                            >
+                                <FontAwesomeIcon icon={fas.faUpLong}/>
+                                <span className={"font-bold ml-2"}>
                             {item.userVoteItems.filter((vote: any) => vote.voteType === VoteField.UPVOTE).length}
                         </span>
-                        </div>
-                        {
-                            !positiveOnly &&
+                            </div>
+                            {
+                                !positiveOnly &&
+                                <div
+                                    onClick={() => onVote(item.id, VoteField.DOWNVOTE)}
+                                    className={"join-item text-neutral-content flex cursor-pointer items-center justify-center bg-neutral hover:bg-error hover:text-white p-1 transition-all ease-in-out duration-300 px-2 py-1"}
+                                >
+                                    <FontAwesomeIcon icon={fas.faDownLong}/>
+                                    <span
+                                        className={"font-bold ml-2"}>{item.userVoteItems.filter((vote: any) => vote.voteType === VoteField.DOWNVOTE).length}</span>
+                                </div>
+                            }
+                        </> :
+                        <>
                             <div
-                                onClick={() => onVote(item.id, VoteField.DOWNVOTE)}
-                                className={"join-item text-neutral-content flex cursor-pointer items-center justify-center bg-neutral hover:bg-error hover:text-white p-1 transition-all ease-in-out duration-300 px-2 py-1"}
+                                className={"join-item flex items-center justify-center bg-neutral text-neutral-content p-1 px-2 py-1"}
                             >
-                                <FontAwesomeIcon icon={fas.faDownLong}/>
+                                <FontAwesomeIcon icon={fas.faUpLong}/>
                                 <span className={"font-bold ml-2"}>
-                            {item.userVoteItems.filter((vote: any) => vote.voteType === VoteField.DOWNVOTE).length}
+                            {item.userVoteItems.filter((vote: any) => vote.voteType === VoteField.UPVOTE).length}
                         </span>
+                            </div>
+                            {
+                                !positiveOnly &&
+                                <div
+                                    className={"join-item flex items-center justify-center bg-neutral text-neutral-content p-1 px-2 py-1"}
+                                >
+                                    <FontAwesomeIcon icon={fas.faDownLong}/>
+                                    <span
+                                        className={"font-bold ml-2"}>{item.userVoteItems.filter((vote: any) => vote.voteType === VoteField.DOWNVOTE).length}</span>
+                                </div>
+                            }
+                        </>
+                    }
+                </div>
+                {!anonymousVoting &&
+                    <div className="avatar-group -space-x-6 rtl:space-x-reverse ">
+                        {
+                            item.userVoteItems.slice(0, 3).map((vote: any, index: number) => (
+                                vote.user.image?.length ?
+                                    <div
+                                        key={index} className={"avatar"}
+                                    >
+                                        <div className={"w-8"}>
+                                            <Image src={vote.user.image} alt={vote.user.name} width={24} height={24}
+                                                   className="rounded-full"/>
+                                        </div>
+                                    </div> :
+                                    < div
+                                        key={index}
+                                        className="avatar placeholder">
+                                        <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                                            <span>{vote.user.name.charAt(0)}</span>
+                                        </div>
+                                    </div>
+                            ))
+                        }
+                        {
+                            item.userVoteItems.length > 3 &&
+                            <div className="avatar placeholder">
+                                <div className="bg-neutral text-neutral-content w-8">
+                                    <span>+{item.userVoteItems.length - 3}</span>
+                                </div>
                             </div>
                         }
                     </div>
-                    {!anonymousVoting &&
-                        <div className="avatar-group -space-x-6 rtl:space-x-reverse ">
-                            {
-                                item.userVoteItems.slice(0, 3).map((vote: any, index: number) => (
-                                    vote.user.image?.length ?
-                                        <div
-                                            key={index} className={"avatar"}
-                                        >
-                                            <div className={"w-8"}>
-                                                <Image src={vote.user.image} alt={vote.user.name} width={24} height={24}
-                                                       className="rounded-full"/>
-                                            </div>
-                                        </div> :
-                                        < div
-                                            key={index}
-                                            className="avatar placeholder">
-                                            <div className="bg-neutral text-neutral-content w-8 rounded-full">
-                                                <span>{vote.user.name.charAt(0)}</span>
-                                            </div>
-                                        </div>
-                                ))
-                            }
-                            {
-                                item.userVoteItems.length > 3 &&
-                                <div className="avatar placeholder">
-                                    <div className="bg-neutral text-neutral-content w-8">
-                                        <span>+{item.userVoteItems.length - 3}</span>
-                                    </div>
-                                </div>
-                            }
+                }
+                <div
+                    className={"flex items-center gap-2"}
+                >
+                    {
+                        isOwner &&
+                        <div
+                            onClick={() => {
+                                const confirm = window.confirm("Are you sure you want to delete this item?");
+                                if (confirm) {
+                                    deleteItem(item.id);
+                                }
+                            }}
+                            data-tip={"Delete Item"}
+                            className={"tooltip text-neutral-content join-item cursor-pointer flex items-center aspect-square h-8 rounded justify-center bg-neutral hover:bg-error hover:text-white p-1 transition-all ease-in-out duration-300"}
+                        >
+                            <FontAwesomeIcon icon={fas.faTrash}/>
                         </div>
                     }
-                    <div
-                        className={"flex items-center gap-2"}
-                    >
-                        {
-                            isOwner &&
-                            <div
-                                onClick={() => {
-                                    const confirm = window.confirm("Are you sure you want to delete this item?");
-                                    if (confirm) {
-                                        deleteItem(item.id);
-                                    }
-                                }}
-                                data-tip={"Delete Item"}
-                                className={"tooltip text-neutral-content join-item cursor-pointer flex items-center aspect-square h-8 rounded justify-center bg-neutral hover:bg-error hover:text-white p-1 transition-all ease-in-out duration-300"}
-                            >
-                                <FontAwesomeIcon icon={fas.faTrash}/>
-                            </div>
-                        }
-
+                    {!isClosed &&
                         <div
                             onClick={() => onVote(item.id, VoteField.NEUTRAL)}
                             data-tip={"Neutral vote"}
@@ -141,9 +166,9 @@ const VoteItem = (
                         >
                             <FontAwesomeIcon icon={fas.faLeftRight}/>
                         </div>
-                    </div>
+                    }
                 </div>
-            }
+            </div>
         </div>
     )
 }
