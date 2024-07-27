@@ -179,7 +179,7 @@ const Page = async ({params}: { params: { id: string } }) => {
                 code: params.id
             },
             data: {
-                isClosed: !vote?.isClosed || false
+                isClosed: !vote?.isClosed
             }
         })
         return revalidatePath("/vote/" + params.id)
@@ -192,7 +192,7 @@ const Page = async ({params}: { params: { id: string } }) => {
                 code: params.id
             },
             data: {
-                anonymous: !vote?.anonymous || true
+                anonymous: !vote?.anonymous
             }
         })
         return revalidatePath("/vote/" + params.id)
@@ -345,11 +345,7 @@ const Page = async ({params}: { params: { id: string } }) => {
                         <MiniVoteStat title={"Status"} value={"Open"}/>
                     )
                 }
-                {
-                    vote.anonymous && (
-                        <MiniVoteStat title={"Anonymous"} value={"Yes"}/>
-                    )
-                }
+                <MiniVoteStat title={"Anonymous"} value={vote.anonymous ? "Yes" : "No"}/>
             </div>
 
             {

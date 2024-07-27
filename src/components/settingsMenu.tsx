@@ -119,7 +119,7 @@ const settingsMenu = ({
                                 data-tip={anonymousVoting ? "Disable anonymous voting" : "Enable anonymous voting"}
                                 className={"btn btn-secondary btn-sm text-white p-2 rounded tooltip tooltip-left aspect-square"}
                             >
-                                {votingIsOpen ?
+                                {anonymousVoting ?
                                     <FontAwesomeIcon icon={fas.faUserSecret}/> :
                                     <FontAwesomeIcon icon={fas.faUser}/>
                                 }

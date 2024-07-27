@@ -97,6 +97,7 @@ const VoteItem = (
                                             </div>
                                         </div> :
                                         < div
+                                            key={index}
                                             data-tip={vote.user.name + " - " + vote.voteType}
                                             className="avatar placeholder tooltip">
                                             <div className="bg-neutral text-neutral-content w-8 rounded-full">
