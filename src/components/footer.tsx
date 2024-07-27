@@ -13,7 +13,7 @@ const Footer = () => {
             </aside>
             <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
                 <Link
-                    href={"https://github.com/M4rshel/votes"}
+                    href={"https://github.com/M4rshe1/votes"}
                     target={"_blank"}
                 >
                     <FontAwesomeIcon icon={fab.faGithub} className={"w-8 aspect-square text-5xl"}/>
