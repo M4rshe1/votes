@@ -40,16 +40,26 @@ const VoteItems = ({
 
     const isClosed = vote.isClosed || (vote.endDate && vote.endDate < new Date().toISOString());
 
+    let offset = 0
+
     return (
         <div
             className={"grid gap-4 w-full grid-cols-1 lg:grid-cols-2 items-center"}
         >
-            {sortedVoteItems.map((item: any, index: number) => (
-                <VoteItem
+            {sortedVoteItems.map((item: any, index: number) => {
+                const lastVoteScore = sortedVoteItems[index - 1] ? voteItemScores[sortedVoteItems[index - 1].id] : 0;
+                const isSameScore = voteItemScores[item.id] === lastVoteScore;
+                if (isSameScore) {
+                    offset++;
+                } else {
+                    offset = 0;
+                }
+
+                return <VoteItem
                     key={index}
                     item={item}
                     onVote={onVote}
-                    index={index}
+                    index={index - offset}
                     deleteItem={deleteVoteItem}
                     isOwner={isOwner}
                     isClosed={isClosed}
@@ -57,7 +67,7 @@ const VoteItems = ({
                     positiveOnly={positiveOnly}
                     anonymousVoting={anonymousVoting}
                 />
-            ))}
+            })}
             {
                 sortedVoteItems.length === 0 && (
                     <div

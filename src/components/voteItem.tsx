@@ -122,7 +122,12 @@ const VoteItem = (
                         {
                             isOwner &&
                             <div
-                                onClick={() => deleteItem(item.id)}
+                                onClick={() => {
+                                    const confirm = window.confirm("Are you sure you want to delete this item?");
+                                    if (confirm) {
+                                        deleteItem(item.id);
+                                    }
+                                }}
                                 data-tip={"Delete Item"}
                                 className={"tooltip text-neutral-content join-item cursor-pointer flex items-center aspect-square h-8 rounded justify-center bg-neutral hover:bg-error hover:text-white p-1 transition-all ease-in-out duration-300"}
                             >
