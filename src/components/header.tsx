@@ -95,8 +95,8 @@ const Header = async () => {
                                 >
                                     {session?.user.name}
                                 </p>
-                                <li><Link className="justify-between"
-                                          href={"/account/votes"}>My Votes</Link></li>
+                                {/*<li><Link className="justify-between"*/}
+                                {/*          href={"/account/votes"}>My Votes</Link></li>*/}
                                 <li>{<LogoutButton className={'btn-error'}/>}</li>
                             </ul>
                         </div> : null

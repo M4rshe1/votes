@@ -29,7 +29,7 @@ const VoteItem = (
             <div>
                 <h2 className={"text-secondary font-bold flex items-center justify-between"}>
                     <div>
-                        <span className={"text-2xl text-secondary"}>#{index + 1}</span> {item.title}
+                        <span className={"text-2xl text-secondary"}>#{index}</span> {item.title}
                     </div>
                     <div>
                         {userVote === VoteField.UPVOTE &&

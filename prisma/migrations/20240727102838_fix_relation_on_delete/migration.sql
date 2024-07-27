@@ -2,9 +2,6 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "VoteUserRelation" AS ENUM ('OWNER', 'VOTER');
-
--- CreateEnum
 CREATE TYPE "VoteField" AS ENUM ('UPVOTE', 'DOWNVOTE', 'NEUTRAL');
 
 -- CreateTable
@@ -13,23 +10,25 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "name" TEXT,
     "role" "Role" NOT NULL DEFAULT 'USER',
+    "image" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "VoteUser" (
+CREATE TABLE "VoteOwner" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "voteId" TEXT NOT NULL,
-    "relation" "VoteUserRelation" NOT NULL DEFAULT 'VOTER',
 
-    CONSTRAINT "VoteUser_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "VoteOwner_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Vote" (
     "id" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
     "usersCanAddItems" BOOLEAN NOT NULL DEFAULT false,
@@ -37,6 +36,8 @@ CREATE TABLE "Vote" (
     "isClosed" BOOLEAN NOT NULL DEFAULT false,
     "endDate" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "upVotesOnly" BOOLEAN NOT NULL DEFAULT false,
+    "anonymous" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "Vote_pkey" PRIMARY KEY ("id")
 );
@@ -48,6 +49,7 @@ CREATE TABLE "VoteItem" (
     "description" TEXT,
     "gmaps" TEXT,
     "voteId" TEXT NOT NULL,
+    "createdById" TEXT NOT NULL,
 
     CONSTRAINT "VoteItem_pkey" PRIMARY KEY ("id")
 );
@@ -70,10 +72,13 @@ CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "VoteUser_id_key" ON "VoteUser"("id");
+CREATE UNIQUE INDEX "VoteOwner_id_key" ON "VoteOwner"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Vote_id_key" ON "Vote"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Vote_code_key" ON "Vote"("code");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VoteItem_id_key" ON "VoteItem"("id");
@@ -82,16 +87,22 @@ CREATE UNIQUE INDEX "VoteItem_id_key" ON "VoteItem"("id");
 CREATE UNIQUE INDEX "UserVoteItem_id_key" ON "UserVoteItem"("id");
 
 -- AddForeignKey
-ALTER TABLE "VoteUser" ADD CONSTRAINT "VoteUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "VoteOwner" ADD CONSTRAINT "VoteOwner_voteId_fkey" FOREIGN KEY ("voteId") REFERENCES "Vote"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "VoteItem" ADD CONSTRAINT "VoteItem_voteId_fkey" FOREIGN KEY ("voteId") REFERENCES "Vote"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "VoteOwner" ADD CONSTRAINT "VoteOwner_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserVoteItem" ADD CONSTRAINT "UserVoteItem_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "VoteItem" ADD CONSTRAINT "VoteItem_voteId_fkey" FOREIGN KEY ("voteId") REFERENCES "Vote"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserVoteItem" ADD CONSTRAINT "UserVoteItem_voteItemId_fkey" FOREIGN KEY ("voteItemId") REFERENCES "VoteItem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "VoteItem" ADD CONSTRAINT "VoteItem_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserVoteItem" ADD CONSTRAINT "UserVoteItem_voteId_fkey" FOREIGN KEY ("voteId") REFERENCES "Vote"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "UserVoteItem" ADD CONSTRAINT "UserVoteItem_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserVoteItem" ADD CONSTRAINT "UserVoteItem_voteItemId_fkey" FOREIGN KEY ("voteItemId") REFERENCES "VoteItem"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserVoteItem" ADD CONSTRAINT "UserVoteItem_voteId_fkey" FOREIGN KEY ("voteId") REFERENCES "Vote"("id") ON DELETE CASCADE ON UPDATE CASCADE;

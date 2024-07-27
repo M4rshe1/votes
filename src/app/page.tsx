@@ -3,13 +3,12 @@ import {getServerSession} from "next-auth";
 import {redirect} from "next/navigation";
 import db from "@/lib/db";
 import VoteCardItem from "@/components/voteCardItem";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {fas} from "@fortawesome/free-solid-svg-icons";
+import CreateVote from "@/components/createVote";
 
 const Page = async () => {
     const session = await getServerSession(authOptions)
     if (!session || !session.user) {
-        return redirect('/api/auth/signin')
+        return redirect('/auth/login')
     }
 
     const ownedVotes = await db.voteOwner.findMany({
@@ -37,6 +36,7 @@ const Page = async () => {
 
     async function deleteVote(voteId: string) {
         "use server";
+
         await db.vote.delete({
             where: {
                 id: voteId
@@ -44,9 +44,35 @@ const Page = async () => {
         })
     }
 
+    async function createVote() {
+        "use server";
+        const code = Math.random().toString(36).substring(2, 32)
+
+        await db.vote.create({
+            data: {
+                title: "New Vote",
+                description: "Description",
+                code: code,
+                voteOwner: {
+                    create: {
+                        user: {
+                            connect: {
+                                // @ts-ignore
+                                email: session.user.email as string
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        return redirect(`/vote/${code}`)
+    }
+
     return (
         <main className="h-full w-full lg:max-w-4xl md:max-w-3xl flex flex-col items-center px-4 mb-8 relative">
-            <div>
+            <div
+            className={`w-full h-full`}
+            >
                 <h1
                     className={`text-2xl font-bold text-primary text-center w-full mt-8 mb-4`}
                 >
@@ -55,6 +81,7 @@ const Page = async () => {
                 <div
                     className={`w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
                 >
+                    <CreateVote handleCreate={createVote}/>
                     {
                         ownedVotes.map((ownedVote, index) => {
                             const currentDate = new Date()
@@ -64,7 +91,7 @@ const Page = async () => {
                                 const endDate = new Date(ownedVote.vote.endDate)
                                 endDate.setHours(0, 0, 0, 0)
                                 // @ts-ignore
-                                status = endDate < currentDate ? "ended" : ownedVotes.vote.startDate > currentDate ? "open" : "closed"
+                                status = endDate < currentDate ? "ended" : !ownedVote.vote.isClosed ? "open" : "closed"
                             }
                             console.log(ownedVote)
                             return (
@@ -77,47 +104,22 @@ const Page = async () => {
                                     status={status as "open" | "closed" | "ended"}
                                     deleteHandler={deleteVote}
                                     code={ownedVote.vote.code}
+                                    endDate={ownedVote.vote.endDate}
                                 />
                             )
                         })
                     }
-                    <div className="shadow-md rounded p-4 border border-neutral relative">
-                        <h2 className="text-lg font-bold w-1/2 h-6 skeleton"></h2>
-                        <p className={`skeleton w-full h-4 mt-2`}></p>
-                        <p className={`skeleton w-2/3 h-4 mt-1`}></p>
-                        <div className="flex justify-between items-center mt-4">
-                            <span className={`skeleton text-sm font-semibold w-1/4 h-4`}></span>
-                            <div className={`flex gap-2`}>
-                                <button className="btn btn-error btn-sm aspect-square text-white">
-                                    <FontAwesomeIcon icon={fas.faTrash}/>
-                                </button>
-                                <button className="btn btn-secondary btn-sm aspect-square text-white">
-                                    <FontAwesomeIcon icon={fas.faGear}/>
-                                </button>
-                            </div>
-                        </div>
-                        <div>
-                            <FontAwesomeIcon icon={fas.faArrowRight} className="absolute top-4 right-4 cursor-pointer"/>
-                        </div>
-                        <div
-                        className={`absolute inset-0 bg-opacity-50 z-10 backdrop-blur flex items-center justify-center`}
-                        >
-                            <button
-                            className={`btn btn-primary`}
-                            >
-                                <FontAwesomeIcon icon={fas.faPlus}/>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <div>
+            <div
+            className={`w-full h-full`}
+            >
                 <h1
-                className={`text-2xl font-bold text-primary text-center w-full mt-8 mb-4`}
+                    className={`text-2xl font-bold text-primary text-center w-full mt-8 mb-4`}
                 >
                     Voted Votes
                 </h1>
-                <div className={`w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
+                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full`}>
                     {
                         votedVotes.map((votedVote, index) => {
                             const currentDate = new Date()
@@ -127,7 +129,7 @@ const Page = async () => {
                                 const endDate = new Date(votedVote.vote.endDate)
                                 endDate.setHours(0, 0, 0, 0)
                                 // @ts-ignore
-                                status = endDate < currentDate ? "ended" : votedVote.vote.startDate > currentDate ? "open" : "closed"
+                                status = endDate < currentDate ? "ended" : !votedVote.vote.isClosed ? "open" : "closed"
                             }
                             return (
                                 <VoteCardItem
@@ -139,6 +141,7 @@ const Page = async () => {
                                     status={status as "open" | "closed" | "ended"}
                                     deleteHandler={deleteVote}
                                     code={votedVote.vote.code}
+                                    endDate={votedVote.vote.endDate}
                                 />
                             )
                         })

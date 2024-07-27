@@ -21,13 +21,9 @@ const VoteItems = ({
 ) => {
     const [isAddingVote, setIsAddingVote] = useState(false);
 
-    const voteItemScores = vote.voteItems.map((item: any) => {
-        return {
-            [item.id]: item.userVoteItems.filter((vote: any) => vote.voteType === "UPVOTE").length - item.userVoteItems.filter((vote: any) => vote.voteType === "DOWNVOTE").length
-        }
-    }).reduce((acc: any, item: any) => {
-        return {...acc, ...item}
-    })
+    const voteItemScores = vote.voteItems.length > 0 ? vote.voteItems.map((item: any) => ({
+        [item.id]: item.userVoteItems.filter((vote: any) => vote.voteType === "UPVOTE").length - item.userVoteItems.filter((vote: any) => vote.voteType === "DOWNVOTE").length
+    })).reduce((acc: any, item: any) => ({...acc, ...item})) : {};
 
     const sortedVoteItems = vote.voteItems.sort((a: any, b: any) => {
         return voteItemScores[b.id] - voteItemScores[a.id]
@@ -59,7 +55,7 @@ const VoteItems = ({
                     key={index}
                     item={item}
                     onVote={onVote}
-                    index={index - offset}
+                    index={Math.max(index - offset, 1)}
                     deleteItem={deleteVoteItem}
                     isOwner={isOwner}
                     isClosed={isClosed}
@@ -188,7 +184,7 @@ const VoteItems = ({
                                 <span>Description</span>
                                 <textarea
                                     placeholder={"Description"}
-                                    className={"textarea textarea-bordered resize"}
+                                    className={"textarea textarea-bordered resize h-48"}
                                     name={"description"}
                                 />
                             </label>

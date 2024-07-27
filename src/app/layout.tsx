@@ -26,7 +26,7 @@ export default function RootLayout({
                 <body className={inter.className}>
                 <Header/>
                 <Suspense fallback={<Loading/>}>
-                    <main className="flex min-h-screen flex-col items-center justify-between w-full">
+                    <main className="flex min-h-screen flex-col items-center justify-start w-full">
                         {children}
                     </main>
                 </Suspense>

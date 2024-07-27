@@ -5,9 +5,9 @@ import db from "@/lib/db";
 import {Role} from "@prisma/client";
 
 export const authOptions: AuthOptions = {
-    // pages: {
-    //     signIn: '/auth/login',
-    // },
+    pages: {
+        signIn: '/auth/login',
+    },
     jwt: {
         maxAge: 30 * 24 * 60 * 60,
     },

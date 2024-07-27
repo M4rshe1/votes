@@ -34,8 +34,8 @@ model VoteOwner {
   id     String @id @unique @default(cuid())
   userId String
   voteId String
-  vote   Vote   @relation(fields: [voteId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  vote   Vote   @relation(fields: [voteId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Vote {

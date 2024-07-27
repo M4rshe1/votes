@@ -13,7 +13,7 @@ import SettingsMenu from "@/components/settingsMenu";
 const Page = async ({params}: { params: { id: string } }) => {
     const session = await getServerSession(authOptions)
     if (!session) {
-        return redirect("/api/auth/signin")
+        return redirect("/auth/login")
     }
     const vote = await db.vote.findUnique({
         where: {code: params.id},
@@ -150,6 +150,12 @@ const Page = async ({params}: { params: { id: string } }) => {
                 vote: {
                     connect: {
                         code: params.id
+                    }
+                },
+                createdBy: {
+                    connect: {
+                        // @ts-ignore
+                        email: session.user.email
                     }
                 }
             }
@@ -349,8 +355,12 @@ const Page = async ({params}: { params: { id: string } }) => {
             </div>
 
             {
-                vote.voteItems.length > 0 &&
-                <VoteDiagram vote={vote}/>
+                vote.voteItems.length > 0 ?
+                    <VoteDiagram vote={vote}/> : <div
+                        className={"w-full flex items-center justify-center mt-4 h-96 rounded border border-neutral"}
+                    >
+                        No votes
+                    </div>
             }
             <VoteStats vote={vote}/>
             <VoteItems vote={vote}
