@@ -23,11 +23,11 @@ const VoteDiagram = async ({vote}: { vote: any }) => {
 
     const negativeMax = Math.max(...negativeVoteItems.map((item: any) => item.userVoteItems.filter((vote: any) => vote.voteType === "DOWNVOTE").length))
     return (
-        <div className="w-full flex flex-col items-center justify-center border-neutral rounded-lg border-2 mt-4">
+        <div className="w-full flex flex-col items-center justify-center border-neutral rounded-lg border mt-4">
             {
                 positiveVoteItems.length !== 0 &&
                 <div
-                    className={"w-full h-48 flex items-end justify-between border-b-2 border-neutral gap-1 px-1"}
+                    className={"w-full h-48 flex items-end justify-between border-b border-neutral gap-1 px-1"}
                 >
                     {
                         positiveVoteItems.map((item: any, index: number) => (
@@ -65,7 +65,7 @@ const VoteDiagram = async ({vote}: { vote: any }) => {
             {
                 negativeVoteItems.length !== 0 &&
                 <div
-                    className={"w-full h-48 flex items-start justify-between border-t-2 border-neutral gap-1 px-1"}
+                    className={"w-full h-48 flex items-start justify-between border-t border-neutral gap-1 px-1"}
                 >
                     {
                         positiveVoteItems.map((item: any, index: number) => (

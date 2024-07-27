@@ -84,22 +84,21 @@ const VoteItem = (
                         }
                     </div>
                     {!anonymousVoting &&
-                        <div className="avatar-group -space-x-6 rtl:space-x-reverse">
+                        <div className="avatar-group -space-x-6 rtl:space-x-reverse ">
                             {
                                 item.userVoteItems.slice(0, 3).map((vote: any, index: number) => (
-                                    vote.user.image ?
+                                    vote.user.image?.length ?
                                         <div
-                                            data-tip={vote.user.name + " - " + vote.voteType}
-                                            key={index} className="avatar tooltip">
-                                            <div className="w-12">
-                                                <Image src={vote.user.image} alt={vote.user.name} width={32} height={32}
+                                            key={index} className={"avatar"}
+                                        >
+                                            <div className={"w-8"}>
+                                                <Image src={vote.user.image} alt={vote.user.name} width={24} height={24}
                                                        className="rounded-full"/>
                                             </div>
                                         </div> :
                                         < div
                                             key={index}
-                                            data-tip={vote.user.name + " - " + vote.voteType}
-                                            className="avatar placeholder tooltip">
+                                            className="avatar placeholder">
                                             <div className="bg-neutral text-neutral-content w-8 rounded-full">
                                                 <span>{vote.user.name.charAt(0)}</span>
                                             </div>

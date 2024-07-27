@@ -58,13 +58,15 @@ export const authOptions: AuthOptions = {
                         email: profile.email,
                         // @ts-ignore
                         name: profile.name || profile.login,
-                        image: profile.image,
+                        // @ts-ignore
+                        image: account?.provider === "github" ? profile.avatar_url : profile.picture,
                     },
                     update: {
                         email: profile.email,
                         // @ts-ignore
                         name: profile.name || profile.login,
-                        image: profile.image,
+                        // @ts-ignore
+                        image: account?.provider === "github" ? profile.avatar_url : profile.picture,
                     }
                 })
                 return true

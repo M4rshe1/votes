@@ -264,7 +264,7 @@ const settingsMenu = ({
                                 }
                             }}
                             data-tip={"Delete voting"}
-                            className={"btn btn-error btn-sm text-white p-2 rounded tooltip tooltip-left"}
+                            className={"btn btn-error btn-sm text-white p-2 rounded tooltip tooltip-top"}
                         >
                             <FontAwesomeIcon icon={fas.faTrash} className={"cursor-pointer"}/>
                         </button>

@@ -27,6 +27,7 @@ model User {
   userVoteItems UserVoteItem[]
   image         String?
   createdAt     DateTime       @default(now())
+  createdItems  VoteItem[]
 }
 
 model VoteOwner {
@@ -62,6 +63,8 @@ model VoteItem {
   vote          Vote           @relation(fields: [voteId], references: [id], onDelete: Cascade)
   voteId        String
   userVoteItems UserVoteItem[]
+  createdBy     User           @relation(fields: [createdById], references: [id])
+  createdById   String
 }
 
 model UserVoteItem {
