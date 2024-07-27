@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {useEffect, useState} from "react";
 
-const settingsMenu = ({
+const SettingsMenu = ({
                           closeOrReopenVoting,
                           votingIsOpen,
                           anonymousVoting,
@@ -275,4 +275,4 @@ const settingsMenu = ({
     )
 }
 
-export default settingsMenu;
+export default SettingsMenu;
