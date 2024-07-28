@@ -2,9 +2,13 @@
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {fas} from '@fortawesome/free-solid-svg-icons';
+import {useState} from 'react';
+import LoadingBar from "@/components/loadingBar";
 
 const CreateVote = ({handleCreate}: { handleCreate: () => void }) => {
+    const [isLoading, setIsLoading] = useState(false)
     return (
+        <>
         <div className="shadow-md rounded p-4 border border-neutral relative">
             <h2 className="text-lg font-bold w-1/2 h-6 skeleton"></h2>
             <p className={`skeleton w-full h-4 mt-2`}></p>
@@ -32,6 +36,7 @@ const CreateVote = ({handleCreate}: { handleCreate: () => void }) => {
                 <button
                     className={`btn btn-primary tooltip`}
                     onClick={() => {
+                        setIsLoading(true)
                         localStorage.setItem("settingsMenu", "true")
                         handleCreate()
                     }}
@@ -41,6 +46,9 @@ const CreateVote = ({handleCreate}: { handleCreate: () => void }) => {
                 </button>
             </div>
         </div>
+            {isLoading && <LoadingBar/>}
+        </>
+
     )
 }
 

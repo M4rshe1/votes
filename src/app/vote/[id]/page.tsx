@@ -264,7 +264,7 @@ const Page = async ({params}: { params: { id: string } }) => {
                 code: params.id
             }
         })
-        return revalidatePath("/")
+        return redirect("/")
     }
 
     async function setTitle(title: string) {

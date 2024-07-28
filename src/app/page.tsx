@@ -4,6 +4,7 @@ import {redirect} from "next/navigation";
 import db from "@/lib/db";
 import VoteCardItem from "@/components/voteCardItem";
 import CreateVote from "@/components/createVote";
+import {revalidatePath} from "next/cache";
 
 const Page = async () => {
     const session = await getServerSession(authOptions)
@@ -37,15 +38,38 @@ const Page = async () => {
     async function deleteVote(voteId: string) {
         "use server";
 
+        await db.userVoteItem.deleteMany({
+            where: {
+                voteId: voteId
+            }
+        })
+
+        await db.voteItem.deleteMany({
+            where: {
+                voteId: voteId
+            }
+        })
+
+        await db.voteOwner.deleteMany({
+            where: {
+                voteId: voteId
+            }
+        })
+
         await db.vote.delete({
             where: {
                 id: voteId
             }
         })
+
+        revalidatePath("/")
     }
 
     async function createVote() {
         "use server";
+
+        await new Promise((resolve) => setTimeout(resolve, 9000))
+
         const code = Math.random().toString(36).substring(2, 32)
 
         await db.vote.create({
@@ -93,7 +117,7 @@ const Page = async () => {
                                 // @ts-ignore
                                 status = endDate < currentDate ? "ended" : !ownedVote.vote.isClosed ? "open" : "closed"
                             }
-                            console.log(ownedVote)
+
                             return (
                                 <VoteCardItem
                                     key={index}
