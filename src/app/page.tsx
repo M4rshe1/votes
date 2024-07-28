@@ -111,6 +111,8 @@ const Page = async () => {
                     }
                 </div>
             </div>
+            {
+                votedVotes.length > 0 &&
             <div
             className={`w-full h-full`}
             >
@@ -148,6 +150,7 @@ const Page = async () => {
                     }
                 </div>
             </div>
+            }
         </main>
     );
 }
