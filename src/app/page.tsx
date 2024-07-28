@@ -68,8 +68,6 @@ const Page = async () => {
     async function createVote() {
         "use server";
 
-        await new Promise((resolve) => setTimeout(resolve, 9000))
-
         const code = Math.random().toString(36).substring(2, 32)
 
         await db.vote.create({
