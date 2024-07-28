@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {VoteField} from "@prisma/client";
 import Image from "next/image";
+import {useState} from "react";
+import ProgressBar from "@/components/progressBar";
 
 
 const VoteItem = (
@@ -21,6 +23,7 @@ const VoteItem = (
         anonymousVoting: boolean
     }
 ) => {
+    const [inProgress, setInProgress] = useState(false);
     const userVote = item.userVoteItems.find((vote: any) => vote.user.email === userEmail)?.voteType;
     return (
         <div className="flex flex-col gap-2 justify-between p-4 border rounded border-neutral h-full w-full">
@@ -148,6 +151,7 @@ const VoteItem = (
                                 onClick={() => {
                                     const confirm = window.confirm("Are you sure you want to delete this item?");
                                     if (confirm) {
+                                        setInProgress(true)
                                         deleteItem(item.id);
                                     }
                                 }}
@@ -174,7 +178,7 @@ const VoteItem = (
                     by {item.createdBy.name}
                 </div>
             </div>
-
+            {inProgress && <ProgressBar/>}
         </div>
     )
 }

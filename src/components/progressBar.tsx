@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 
-const LoadingBar = () => {
+const ProgressBar = () => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
@@ -37,4 +37,4 @@ const LoadingBar = () => {
     );
 };
 
-export default LoadingBar;
+export default ProgressBar;

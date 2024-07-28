@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import {useState} from "react";
+import ProgressBar from "@/components/progressBar";
 
 const VoteCardItem = ({title, description, id, isOwner, status, deleteHandler, code, endDate}: {
     title: string,
@@ -15,6 +17,7 @@ const VoteCardItem = ({title, description, id, isOwner, status, deleteHandler, c
     code: string,
     endDate: Date | null
 }) => {
+    const [inProgress, setInProgress] = useState(false)
     const router = useRouter()
 
     function editSettings() {
@@ -23,6 +26,7 @@ const VoteCardItem = ({title, description, id, isOwner, status, deleteHandler, c
     }
 
     return (
+        <>
         <div className="shadow-md rounded p-4 border h-full border-neutral relative flex flex-col justify-between">
             <div>
                 <h2 className="text-lg font-bold">{title}</h2>
@@ -55,6 +59,7 @@ const VoteCardItem = ({title, description, id, isOwner, status, deleteHandler, c
                             () => {
                                 const confirm = window.confirm("Are you sure you want to delete this vote?")
                                 if (confirm) {
+
                                     deleteHandler(id)
                                 }
                             }
@@ -78,6 +83,8 @@ const VoteCardItem = ({title, description, id, isOwner, status, deleteHandler, c
                 <FontAwesomeIcon icon={fas.faArrowRight}/>
             </Link>
         </div>
+            {inProgress && <ProgressBar/>}
+        </>
     )
 }
 

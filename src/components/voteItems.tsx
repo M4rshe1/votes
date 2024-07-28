@@ -4,6 +4,7 @@ import VoteItem from './voteItem';
 import {useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {fas} from "@fortawesome/free-solid-svg-icons";
+import ProgressBar from "@/components/progressBar";
 
 const VoteItems = ({
                        vote, onVote, addVote, deleteVoteItem, isOwner, userEmail, positiveOnly, anonymousVoting
@@ -20,6 +21,7 @@ const VoteItems = ({
                    }
 ) => {
     const [isAddingVote, setIsAddingVote] = useState(false);
+    const [inProgress, setInProgress] = useState(false);
 
     const voteItemScores = vote.voteItems.length > 0 ? vote.voteItems.map((item: any) => ({
         [item.id]: item.userVoteItems.filter((vote: any) => vote.voteType === "UPVOTE").length - item.userVoteItems.filter((vote: any) => vote.voteType === "DOWNVOTE").length
@@ -30,6 +32,7 @@ const VoteItems = ({
     })
 
     function handleAddVote(formData: FormData) {
+        setInProgress(true)
         addVote(formData)
         setIsAddingVote(false)
     }
@@ -204,6 +207,9 @@ const VoteItems = ({
                         </form>
                     </div>
                 )
+            }
+            {
+                inProgress && <ProgressBar/>
             }
         </div>
     )

@@ -3,7 +3,7 @@
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {fas} from '@fortawesome/free-solid-svg-icons';
 import {useState} from 'react';
-import LoadingBar from "@/components/loadingBar";
+import ProgressBar from "@/components/progressBar";
 
 const CreateVote = ({handleCreate}: { handleCreate: () => void }) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -46,7 +46,7 @@ const CreateVote = ({handleCreate}: { handleCreate: () => void }) => {
                 </button>
             </div>
         </div>
-            {isLoading && <LoadingBar/>}
+            {isLoading && <ProgressBar/>}
         </>
 
     )
