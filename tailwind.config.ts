@@ -20,6 +20,7 @@ const config: Config = {
         "nord",
         "winter",
         "retro",
+        "synthwave",
       {
         sunset: {
             ...require("daisyui/src/theming/themes")["sunset"],

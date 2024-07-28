@@ -24,7 +24,8 @@ const Page = async ({params}: { params: { id: string } }) => {
                         include: {
                             user: true
                         }
-                    }
+                    },
+                    createdBy: true
                 }
             },
             voteOwner: {
