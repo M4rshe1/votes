@@ -32,9 +32,10 @@ const VoteItems = ({
     })
 
     function handleAddVote(formData: FormData) {
+        setIsAddingVote(false)
         setInProgress(true)
         addVote(formData)
-        setIsAddingVote(false)
+        setInProgress(false)
     }
 
     const isClosed = vote.isClosed || (vote.endDate && vote.endDate < new Date().toISOString());
@@ -102,6 +103,8 @@ const VoteItems = ({
                                 ></h2>
                             </div>
                         </div>
+                        <div>
+
                         <div
                             className={"flex items-center justify-between"}
                         >
@@ -146,13 +149,19 @@ const VoteItems = ({
                                 </div>
                             </div>
                         </div>
+                            <div
+                                className={"text-neutral-500 text-xs mt-2"}
+                            >
+                                by John Doe
+                            </div>
+                        </div>
                         <div
                             className={"absolute inset-0 flex items-center justify-center backdrop-blur"}
                         >
-                            <button
+                        <button
                                 className={"btn btn-primary"}
                                 onClick={() => setIsAddingVote(!isAddingVote)}
-                            >Add Item
+                            ><FontAwesomeIcon icon={fas.faPlus}/>
                             </button>
                         </div>
                     </div>

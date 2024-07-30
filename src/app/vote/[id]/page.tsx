@@ -161,6 +161,7 @@ const Page = async ({params}: { params: { id: string } }) => {
                 }
             }
         })
+
         return revalidatePath("/vote/" + params.id)
     }
 
